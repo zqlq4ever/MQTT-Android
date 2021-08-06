@@ -8,6 +8,10 @@
 [![](https://jitpack.io/v/zqlq4ever/MQTT-Android.svg)](https://jitpack.io/#zqlq4ever/MQTT-Android)
 
 ```groovy
+repositories {
+        maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     implementation 'com.github.zqlq4ever:MQTT-Android::$version'
 }

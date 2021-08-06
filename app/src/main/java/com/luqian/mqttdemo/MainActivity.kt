@@ -7,9 +7,12 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.gyf.immersionbar.BarHide
+import com.gyf.immersionbar.ImmersionBar
 import com.luqian.mqtt.*
-import kotlinx.android.synthetic.main.activity_main.*
+import com.luqian.mqttdemo.databinding.ActivityMainBinding
 
 @SuppressLint("HardwareIds")
 class MainActivity : AppCompatActivity(),
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var mqttHelper: IMqtt
 
+    lateinit var bind: ActivityMainBinding
 
     private val mAdapter: MessageAdapter by lazy {
         MessageAdapter()
@@ -38,14 +42,13 @@ class MainActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR).init()
+        bind = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        bind.btnSend.setOnClickListener(this)
+        bind.txtTitle.text = "通信中..."
 
-        btnSend.setOnClickListener(this)
-        txtTitle.text = "通信中..."
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = mAdapter
-
+        bind.recyclerView.layoutManager = LinearLayoutManager(this)
+        bind.recyclerView.adapter = mAdapter
         val options = MqttOptions(
             serviceUrl = "tcp://broker.hivemq.com:1883",
             username = "admin",
@@ -64,12 +67,12 @@ class MainActivity : AppCompatActivity(),
 
     override fun onClick(v: View?) {
         if (v?.id == R.id.btnSend) {
-            val content: String? = editContent.text?.toString()
+            val content: String? = bind.editContent.text?.toString()
             if (content.isNullOrEmpty()) {
                 Toast.makeText(this, "请输入要发送的内容", Toast.LENGTH_SHORT).show()
             } else {
                 mqttHelper.pubMessage(TOPIC_PUB, content.toByteArray())
-                editContent.setText("")
+                bind.editContent.setText("")
             }
         }
     }
@@ -77,13 +80,13 @@ class MainActivity : AppCompatActivity(),
 
     override fun onSubMessage(topic: String, payload: ByteArray) {
         mAdapter.addMessage(String(payload))
-        recyclerView?.smoothScrollToPosition(mAdapter.itemCount - 1)
+        bind.recyclerView.smoothScrollToPosition(mAdapter.itemCount - 1)
     }
 
 
     override fun onPubMessage(payload: ByteArray) {
         mAdapter.addMessage(String(payload), true)
-        recyclerView?.smoothScrollToPosition(mAdapter.itemCount - 1)
+        bind.recyclerView.smoothScrollToPosition(mAdapter.itemCount - 1)
     }
 
 
@@ -95,13 +98,13 @@ class MainActivity : AppCompatActivity(),
      */
     @SuppressLint("SetTextI18n")
     override fun onChange(state: MqttStatus, throwable: Throwable?) {
-        btnSend.isEnabled = state == MqttStatus.SUCCESS
-        editContent.isEnabled = state == MqttStatus.SUCCESS
+        bind.btnSend.isEnabled = state == MqttStatus.SUCCESS
+        bind.editContent.isEnabled = state == MqttStatus.SUCCESS
         if (state == MqttStatus.SUCCESS) {
             mqttHelper.subscribe(TOPIC_SUB)
-            txtTitle?.text = TOPIC_SUB
+            bind.txtTitle.text = TOPIC_SUB
         } else {
-            txtTitle?.text = state.name
+            bind.txtTitle.text = state.name
         }
     }
 
