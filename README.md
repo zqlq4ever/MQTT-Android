@@ -3,10 +3,13 @@
 &emsp;&emsp;常用于 IOT 物联网和一些需要服务端主动通知客户端的场景。  
 
 ### 二、使用  
-**1. 导入依赖**  
+**1. 导入依赖**
+
+[![](https://jitpack.io/v/zqlq4ever/MQTT-Android.svg)](https://jitpack.io/#zqlq4ever/MQTT-Android)
+
 ```groovy
 dependencies {
-    implementation 'com.jinyx.mqtt:mqtt:0.0.1' 
+    implementation 'com.github.zqlq4ever:MQTT-Android::$version'
 }
 ```
 
@@ -19,10 +22,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
     setContentView(R.layout.activity_main)
 
     val options = MqttOptions(
-        serviceUrl = "tcp://192.168.0.106:61613",   // MQTT 服务
+        serviceUrl = "tcp://ip:port",   // MQTT 服务
         username = "admin",
         password = "password",
-        clientId = "android-${System.currentTimeMillis()}", // MQTT 客户端ID， 唯一标识，如果存在多个 MQTT 对象使用同一个 clientId，会导致相互之间不断被挤掉再重连
+        clientId = "android-${System.currentTimeMillis()}", // MQTT 客户端 ID， 唯一标识，如果存在多个 MQTT 对象使用同一个 clientId，会导致相互之间不断被挤掉再重连
         willTopic = "will/android",     // 遗嘱 Topic，不能存在通配符 # 和 +，可用于监听对方是否掉线
         willMsg = "I'm Died - $Id"      // 遗嘱消息，当客户端掉线，MQTT 服务发送pingreq包，客户端不回复 pingresp 包，MQTT 发送遗嘱消息到 订阅 willTopic 的客户端
     )
