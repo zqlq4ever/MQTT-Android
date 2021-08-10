@@ -1,12 +1,14 @@
 package com.luqian.mqttdemo
 
 import android.graphics.Color
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
-import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.RecyclerView
+
 
 class MessageAdapter : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
@@ -20,8 +22,12 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = View.inflate(parent.context, R.layout.item_message, null)
-        return ViewHolder(itemView)
+        val view: View = LayoutInflater.from(parent.context).inflate(
+            R.layout.item_message,
+            parent,
+            false
+        )
+        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -29,22 +35,27 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val tv_sender = holder.findView<TextView>(R.id.tv_sender)
-        val tv_other = holder.findView<TextView>(R.id.tv_other)
-        val sender = holder.findView<Group>(R.id.sender)
-        val other = holder.findView<Group>(R.id.other)
+        val tvSender = holder.findView<TextView>(R.id.tv_sender)
+        val ivSender = holder.findView<ImageView>(R.id.iv_sender)
+        val tvOther = holder.findView<TextView>(R.id.tv_other)
+        val ivOther = holder.findView<ImageView>(R.id.iv_other)
 
-        sender.visibility = View.GONE
-        other.visibility = View.GONE
+        tvSender.visibility = View.GONE
+        tvOther.visibility = View.GONE
+        ivSender.visibility = View.GONE
+        ivOther.visibility = View.GONE
+
         if (mDataList[position].isPublish) {
-            sender.visibility = View.VISIBLE
-            tv_sender.run {
+            tvSender.visibility = View.VISIBLE
+            ivSender.visibility = View.VISIBLE
+            tvSender.run {
                 text = mDataList[position].message
                 setTextColor(Color.parseColor("#00AAAA"))
             }
         } else {
-            other.visibility = View.VISIBLE
-            tv_other.run {
+            tvOther.visibility = View.VISIBLE
+            ivOther.visibility = View.VISIBLE
+            tvOther.run {
                 text = mDataList[position].message
                 setTextColor(Color.parseColor("#666666"))
             }

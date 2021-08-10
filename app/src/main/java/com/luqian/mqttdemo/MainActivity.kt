@@ -21,8 +21,8 @@ class MainActivity : AppCompatActivity(),
     OnMqttStatusChangeListener {
 
     private companion object {
-        private const val TOPIC_PUB = "/rct/luqian/android"
-        private const val TOPIC_SUB = "/rct/luqian/server"
+        private const val TOPIC_PUB = "/rtc/luqian/android"
+        private const val TOPIC_SUB = "/rtc/luqian/server"
     }
 
 
@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity(),
         bind.btnSend.setOnClickListener(this)
         bind.txtTitle.text = "通信中..."
 
-        bind.recyclerView.layoutManager = LinearLayoutManager(this)
         bind.recyclerView.adapter = mAdapter
         val options = MqttOptions(
             serviceUrl = "tcp://broker.hivemq.com:1883",
